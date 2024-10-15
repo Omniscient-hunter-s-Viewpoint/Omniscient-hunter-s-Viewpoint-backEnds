@@ -1,0 +1,23 @@
+server:
+  port : 8383
+spring:
+  datasource:
+    driver-class-name : org.mariadb.jdbc.Driver
+    url : jdbc:mariadb://localhost:3306/app
+    username : root
+    password : 1234
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDB106Dialect
+    hibernate:
+      #ddl을 생성할 때 전략
+      ddl-auto: create
+    #DDL을 생성할때 전략
+    properties:
+      hibernate:
+        format_sql: true #로그 줄바꿈해서 가독성 상승
+    database: mysql # DBMS 계열 설정
+
+logging:
+  level:
+    root: info
+    org.hibernate.SQL: debug
