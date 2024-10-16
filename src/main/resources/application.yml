@@ -10,7 +10,7 @@ spring:
     database-platform: org.hibernate.dialect.MariaDB106Dialect
     hibernate:
       #ddl을 생성할 때 전략
-      ddl-auto: create
+      ddl-auto: update
     #DDL을 생성할때 전략
     properties:
       hibernate:
@@ -21,3 +21,4 @@ logging:
   level:
     root: info
     org.hibernate.SQL: debug
+    com.hunter.user: debug
