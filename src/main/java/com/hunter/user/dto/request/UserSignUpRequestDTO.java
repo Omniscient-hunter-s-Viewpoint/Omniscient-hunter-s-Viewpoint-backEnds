@@ -26,7 +26,7 @@ public class UserSignUpRequestDTO {
     private String password;
 
     @NotBlank
-    @Size(min = 2, max = 5)
+    @Size(min = 2, max = 20)
     private String username;
 
     //엔터티로 변환해주는 메서드

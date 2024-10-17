@@ -1,9 +1,12 @@
 package com.hunter.user.service;
 
+import com.hunter.auth.TokenProvider;
 import com.hunter.exception.DuplicatedEmailException;
 import com.hunter.exception.NoRegisteredArgumentsException;
 import com.hunter.user.Repository.UserRepository;
+import com.hunter.user.dto.request.LoginRequestDTO;
 import com.hunter.user.dto.request.UserSignUpRequestDTO;
+import com.hunter.user.dto.response.LoginResponseDTO;
 import com.hunter.user.dto.response.UserSignUpResponseDTO;
 import com.hunter.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
 
     public UserSignUpResponseDTO create(UserSignUpRequestDTO dto){
 
@@ -36,5 +40,28 @@ public class UserService {
     }
     public boolean isDuplicateEmail(String email){
         return userRepository.existsByEmail(email);
+    }
+    public boolean isDuplicateUserName(String userName){
+        return userRepository.existsByUsername(userName);
+    }
+    //회원인증
+    public LoginResponseDTO authenticate(final LoginRequestDTO dto){
+        User user=userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(
+                        () -> new RuntimeException("가입된 회원이 아닙니다.!")
+                );
+
+        //패스워드 검증
+        String inputPassword=dto.getPassword();
+        String encodedPassword=user.getPassword();
+
+        if(!passwordEncoder.matches(inputPassword,encodedPassword)){
+            throw new RuntimeException("비밀번호가 틀렸습니다.");
+        }
+        //로그인 성공후 토큰 or 세션?
+        String token = tokenProvider.createToken(user);
+
+        //클라이언트에게 토큰 발급 제공
+        return new LoginResponseDTO(user,token);
     }
 }

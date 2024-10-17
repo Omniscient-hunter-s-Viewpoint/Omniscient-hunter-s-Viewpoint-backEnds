@@ -2,7 +2,9 @@ package com.hunter.user.controller;
 
 import com.hunter.exception.DuplicatedEmailException;
 import com.hunter.exception.NoRegisteredArgumentsException;
+import com.hunter.user.dto.request.LoginRequestDTO;
 import com.hunter.user.dto.request.UserSignUpRequestDTO;
+import com.hunter.user.dto.response.LoginResponseDTO;
 import com.hunter.user.dto.response.UserSignUpResponseDTO;
 import com.hunter.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
-@CrossOrigin(origins = {"http://localhost:3001"})
 public class UserController {
     private final UserService userService;
 
@@ -45,11 +46,31 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @GetMapping("/check")
+    @GetMapping("/emailCheck")
     public ResponseEntity<?> check(String email) {
         boolean flag = userService.isDuplicateEmail(email);
-        log.debug("{} 중복?? - {}",email,flag);
+        log.debug("{} 이메일중복?? - {}",email,flag);
         return ResponseEntity.ok(flag);
     }
+    @GetMapping("/userNameCheck")
+    public ResponseEntity<?> checkUserName(String userName) {
+        boolean flag = userService.isDuplicateUserName(userName);
+        log.debug("{} 이름중복?? - {}",userName,flag);
+        return ResponseEntity.ok(flag);
+    }
+    @PostMapping("/signin")
+    public ResponseEntity<?> sighin(
+            @Validated @RequestBody LoginRequestDTO dto
+    ){
+        try {
+            LoginResponseDTO responseDTO=userService.authenticate(dto);
+            log.info("로그인 성공 {}",responseDTO.getEmail());
+            return ResponseEntity.ok(responseDTO);
+        }catch (RuntimeException e){
+            log.warn(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 }

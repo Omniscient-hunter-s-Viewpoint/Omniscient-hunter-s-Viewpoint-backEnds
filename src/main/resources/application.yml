@@ -22,3 +22,6 @@ logging:
     root: info
     org.hibernate.SQL: debug
     com.hunter.user: debug
+
+jwt:
+  secret: 4S24nBjY3WyaVjs2kyTta726FVUPuQx3XramEf/tTRottiJxAVdCrfJ+J7u8+g71r/Kw+QwS1OZ0VMvxxSM+Tg==
